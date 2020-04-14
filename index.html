@@ -1,0 +1,303 @@
+<html>
+<head>
+<script src="run_prettify.js?skin=sons-of-obsidian">
+</script>
+</head>
+<body bgcolor="#141414">
+<pre class="prettyprint linenums">package com.java.library.Viewer; 
+ 
+import adrt.ADRTLogCatReader; 
+import android.app.Activity; 
+import android.content.ClipData; 
+import android.content.ClipboardManager; 
+import android.content.Context; 
+import android.database.Cursor; 
+import android.graphics.Bitmap; 
+import android.net.Uri; 
+import android.os.Bundle; 
+import android.text.Html; 
+import android.view.Menu; 
+import android.view.MenuItem; 
+import android.webkit.WebResourceResponse; 
+import android.webkit.WebView; 
+import android.webkit.WebViewClient; 
+import android.widget.ProgressBar; 
+import android.widget.RelativeLayout; 
+import com.java.library.Config.AdMob; 
+import com.java.library.Config.Default; 
+import com.java.library.Config.Video; 
+import com.java.library.plugin.Database.DBAide; 
+import com.java.library.plugin.Database.DBLibs; 
+import com.java.library.plugin.Database.DBList; 
+import com.java.library.plugin.Toolkit.Toolkit; 
+import com.java.library.plugin.Trial.LoadDate; 
+import com.java.library.plugin.androidplayer.Player; 
+import com.java.library.plugin.androidplayer.actions.property.PropertyAction; 
+import com.java.library.plugin.saved.Shared; 
+import java.io.IOException; 
+import java.io.InputStream; 
+ 
+public class Basic extends Activity { 
+    private RelativeLayout ads0; 
+    private RelativeLayout ads1; 
+    private DBAide aide; 
+    private DBLibs libs; 
+    private DBList list; 
+    private ProgressBar progress; 
+    private String s; 
+    private int sType; 
+    private String ss; 
+    private String str; 
+    private Video video; 
+    private WebView webView; 
+ 
+    /* Access modifiers changed, original: protected */ 
+    @Override 
+    public void onCreate(Bundle bundle) { 
+        Bundle bundle2 = bundle; 
+        ADRTLogCatReader.onContext(this, "com.aide.ui"); 
+        super.onCreate(bundle2); 
+        Toolkit.isVpn(this); 
+        Shared.init(this); 
+        this.str = getIntent().getStringExtra("item"); 
+        this.sType = getIntent().getIntExtra("type", 1); 
+        getActionBar().setTitle(this.str); 
+        Toolkit.getOverflowMenu(this); 
+        check(); 
+        isNetwork(); 
+        setContentView(2130903090); 
+        if (((String) Shared.get("admob", Default.admob)).equals("on")) { 
+            LoadDate loadDate = r7; 
+            LoadDate loadDate2 = new LoadDate(this); 
+            if (loadDate.Build()) { 
+                Video video = r7; 
+                Video video2 = new Video(this); 
+                this.video = video; 
+                this.video.Build(); 
+            } 
+        } 
+        init(bundle2); 
+    } 
+ 
+    public void init(Bundle bundle) { 
+        Bundle bundle2 = bundle; 
+        this.ads0 = (RelativeLayout) findViewById(2131493129); 
+        this.ads1 = (RelativeLayout) findViewById(2131493132); 
+        if (((String) Shared.get("admob", Default.admob)).equals("on")) { 
+            AdMob.setBanner(getApplicationContext(), this.ads0, AdMob.getID(), AdMob.getBanner(), AdMob.getDevice()); 
+            AdMob.setBanner(getApplicationContext(), this.ads1, AdMob.getID(), AdMob.getBanner(), AdMob.getDevice()); 
+            AdMob.setInterstitial(getApplicationContext(), AdMob.getID(), AdMob.getInterstitial(), AdMob.getDevice()); 
+        } 
+        this.webView = (WebView) findViewById(2131493130); 
+        this.webView.getSettings().setJavaScriptEnabled(true); 
+        this.webView.getSettings().setDefaultTextEncodingName("utf-8"); 
+        this.webView.getSettings().setBuiltInZoomControls(true); 
+        this.webView.getSettings().setDisplayZoomControls(false); 
+        this.webView.getSettings().setAppCacheMaxSize((long) 5242880); 
+        this.webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath()); 
+        this.webView.getSettings().setAllowFileAccess(true); 
+        this.webView.getSettings().setAppCacheEnabled(true); 
+        this.webView.getSettings().setCacheMode(1); 
+        this.webView.getSettings().setDomStorageEnabled(true); 
+        WebView webView = this.webView; 
+        WebViewClient webViewClient = r11; 
+        WebViewClient anonymousClass100000000 = new WebViewClient(this) { 
+            private final Basic this$0; 
+ 
+            { 
+                this.this$0 = r6; 
+            } 
+ 
+            static Basic access$0(AnonymousClass100000000 anonymousClass100000000) { 
+                return anonymousClass100000000.this$0; 
+            } 
+ 
+            @Override 
+            public void onPageStarted(WebView webView, String str, Bitmap bitmap) { 
+                WebView webView2 = webView; 
+                String str2 = str; 
+                Bitmap bitmap2 = bitmap; 
+                this.this$0.progress = (ProgressBar) this.this$0.findViewById(2131493131); 
+                super.onPageStarted(webView2, str2, bitmap2); 
+            } 
+ 
+            @Override 
+            public void onPageFinished(WebView webView, String str) { 
+                WebView webView2 = webView; 
+                String str2 = str; 
+                this.this$0.progress.setVisibility(8); 
+                super.onPageFinished(webView2, str2); 
+            } 
+ 
+            @Override 
+            public WebResourceResponse shouldInterceptRequest(WebView webView, String str) { 
+                return super.shouldInterceptRequest(webView, str); 
+            } 
+ 
+            private InputStream inputStreamForAndroidResource(String str) { 
+                String str2 = str; 
+                String str3 = "file:///android_asset/"; 
+                if (str2.contains(str3)) { 
+                    str2 = str2.replaceFirst(str3, ""); 
+                    try { 
+                        return this.this$0.getAssets().open(Uri.parse(str2).getPath(), 2); 
+                    } catch (IOException e) { 
+                        e.printStackTrace(); 
+                    } 
+                } 
+                return (InputStream) null; 
+            } 
+        }; 
+        webView.setWebViewClient(webViewClient); 
+        String escapeHtml = Html.escapeHtml(setType(this.sType)); 
+        StringBuffer stringBuffer = r11; 
+        StringBuffer stringBuffer2 = new StringBuffer(); 
+        stringBuffer2 = r11; 
+        StringBuffer stringBuffer3 = new StringBuffer(); 
+        this.webView.loadDataWithBaseURL("file:///android_asset/", stringBuffer.append(stringBuffer2.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /><script src=\"run_prettify.js?skin=sons-of-obsidian\"></script></head><body bgcolor=\"#000000\"><pre class=\"prettyprint linenums\">").append(escapeHtml).toString()).append("</pre></body></html>").toString(), "text/html", "UTF-8", (String) null); 
+        setAnimate(this.webView); 
+    } 
+ 
+    public void setAnimate(WebView webView) { 
+        Player.init().animate(PropertyAction.newPropertyAction(webView).translationY((float) 500).duration(750).alpha(0.0f).build()).play(); 
+    } 
+ 
+    @Override 
+    public boolean onCreateOptionsMenu(Menu menu) { 
+        menu.add("Copy").setIcon(2130837598).setShowAsAction(2); 
+        return true; 
+    } 
+ 
+    @Override 
+    public boolean onOptionsItemSelected(MenuItem menuItem) { 
+        MenuItem menuItem2 = menuItem; 
+        if (!menuItem2.getTitle().toString().equals("Copy")) { 
+            return super.onOptionsItemSelected(menuItem2); 
+        } 
+        if (((String) Shared.get("admob", Default.admob)).equals("on")) { 
+            AdMob.showInter(); 
+        } 
+        Context applicationContext = getApplicationContext(); 
+        ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("clipboard", copy(this.sType))); 
+        Toolkit.s(this, "success", "Copy success!", "Code has added to your clipboard!"); 
+        return true; 
+    } 
+ 
+    @Override 
+    public void onBackPressed() { 
+        super.onBackPressed(); 
+        finish(); 
+    } 
+ 
+    public String setType(int i) { 
+        int i2 = i; 
+        Cursor name; 
+        boolean moveToNext; 
+        String string; 
+        String str; 
+        if (i2 == 1) { 
+            DBList dBList = r9; 
+            DBList dBList2 = new DBList(this); 
+            this.list = dBList; 
+            name = this.list.getName(this.str); 
+            moveToNext = name.moveToNext(); 
+            string = name.getString(2); 
+            str = string; 
+            this.s = string; 
+            return str; 
+        } else if (i2 == 2) { 
+            DBLibs dBLibs = r9; 
+            DBLibs dBLibs2 = new DBLibs(this); 
+            this.libs = dBLibs; 
+            name = this.libs.getName(this.str); 
+            moveToNext = name.moveToNext(); 
+            string = name.getString(2); 
+            str = string; 
+            this.s = string; 
+            return str; 
+        } else if (i2 != 3) { 
+            return this.s; 
+        } else { 
+            DBAide dBAide = r9; 
+            DBAide dBAide2 = new DBAide(this); 
+            this.aide = dBAide; 
+            name = this.aide.getName(this.str); 
+            moveToNext = name.moveToNext(); 
+            string = name.getString(2); 
+            str = string; 
+            this.s = string; 
+            return str; 
+        } 
+    } 
+ 
+    public String copy(int i) { 
+        int i2 = i; 
+        Cursor name; 
+        boolean moveToNext; 
+        String string; 
+        String str; 
+        if (i2 == 1) { 
+            DBList dBList = r9; 
+            DBList dBList2 = new DBList(this); 
+            this.list = dBList; 
+            name = this.list.getName(this.str); 
+            moveToNext = name.moveToNext(); 
+            string = name.getString(2); 
+            str = string; 
+            this.ss = string; 
+            return str; 
+        } else if (i2 == 2) { 
+            DBLibs dBLibs = r9; 
+            DBLibs dBLibs2 = new DBLibs(this); 
+            this.libs = dBLibs; 
+            name = this.libs.getName(this.str); 
+            moveToNext = name.moveToNext(); 
+            string = name.getString(2); 
+            str = string; 
+            this.ss = string; 
+            return str; 
+        } else if (i2 != 3) { 
+            return this.ss; 
+        } else { 
+            DBAide dBAide = r9; 
+            DBAide dBAide2 = new DBAide(this); 
+            this.aide = dBAide; 
+            name = this.aide.getName(this.str); 
+            moveToNext = name.moveToNext(); 
+            string = name.getString(2); 
+            str = string; 
+            this.ss = string; 
+            return str; 
+        } 
+    } 
+ 
+    public boolean isClose() { 
+        if (((String) Shared.get("close", Default.force)).equals("true")) { 
+            return true; 
+        } 
+        return false; 
+    } 
+ 
+    public void check() { 
+        if (isClose()) { 
+            finish(); 
+        } 
+        if (Toolkit.isJavaLibrary(this)) { 
+            finish(); 
+        } 
+    } 
+ 
+    public void isNetwork() { 
+        if (((String) Shared.get("network", Default.network)).equals("true") && !Toolkit.isConnect(this)) { 
+            finish(); 
+        } 
+    } 
+ 
+    public Basic() { 
+    } 
+} 
+ 
+
+</pre>
+</body>
+</html>
